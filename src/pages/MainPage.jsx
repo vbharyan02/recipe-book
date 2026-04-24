@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
 import supabase from '../lib/supabase'
+import { useTheme } from '../lib/ThemeContext'
 
 const CATEGORIES = ['breakfast', 'lunch', 'dinner', 'dessert', 'snack', 'other']
 
@@ -11,6 +12,7 @@ const emptyForm = {
 
 export default function MainPage() {
   const navigate = useNavigate()
+  const { dark, toggle } = useTheme()
   const [recipes, setRecipes] = useState([])
   const [isLoading, setIsLoading] = useState(true)
   const [error, setError] = useState(null)
@@ -189,10 +191,11 @@ export default function MainPage() {
     return matchSearch && matchCat
   })
 
-  const inputCls = 'border rounded px-3 py-2 w-full'
-  const btnBlue = 'bg-blue-600 text-white px-4 py-2 rounded'
-  const btnGray = 'bg-gray-200 text-gray-800 px-4 py-2 rounded'
+  const inputCls = 'border dark:border-gray-600 rounded px-3 py-2 w-full bg-white dark:bg-gray-800 dark:text-gray-100 placeholder-gray-400'
+  const btnBlue = 'bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700'
+  const btnGray = 'bg-gray-200 dark:bg-gray-700 text-gray-800 dark:text-gray-100 px-4 py-2 rounded'
   const btnRed = 'bg-red-500 text-white px-3 py-1 rounded text-sm'
+  const themeBtn = 'text-xl px-2 py-1 rounded hover:bg-gray-100 dark:hover:bg-gray-700'
 
   // ── FORM VIEW (create / edit) ───────────────────────────────────────────────
   if (view === 'create' || view === 'edit') {
@@ -200,7 +203,10 @@ export default function MainPage() {
       <div className="max-w-lg mx-auto mt-8 px-4 pb-12">
         <div className="flex justify-between items-center mb-6">
           <h1 className="text-xl font-bold">{view === 'create' ? 'New Recipe' : 'Edit Recipe'}</h1>
-          <button onClick={() => setView(view === 'create' ? 'list' : 'detail')} className={btnGray}>Cancel</button>
+          <div className="flex gap-2 items-center">
+            <button onClick={toggle} className={themeBtn} aria-label="Toggle dark mode">{dark ? '☀️' : '🌙'}</button>
+            <button onClick={() => setView(view === 'create' ? 'list' : 'detail')} className={btnGray}>Cancel</button>
+          </div>
         </div>
         <form onSubmit={view === 'create' ? handleCreate : handleUpdate} className="space-y-3">
           <input placeholder="Title *" value={form.title} onChange={e => setForm(f => ({...f, title: e.target.value}))} className={inputCls} />
@@ -229,25 +235,26 @@ export default function MainPage() {
       <div className="max-w-lg mx-auto mt-8 px-4 pb-12">
         <div className="flex justify-between items-center mb-4">
           <button onClick={() => setView('list')} className={btnGray}>← Back</button>
-          <div className="flex gap-2">
+          <div className="flex gap-2 items-center">
+            <button onClick={toggle} className={themeBtn} aria-label="Toggle dark mode">{dark ? '☀️' : '🌙'}</button>
             <button onClick={() => openEdit(selected)} className={btnBlue}>Edit</button>
             <button onClick={() => handleDelete(selected.id)} className={btnRed}>Delete</button>
           </div>
         </div>
         <h1 className="text-2xl font-bold mb-1">{selected.title}</h1>
-        {selected.category && <span className="text-xs bg-gray-100 px-2 py-1 rounded capitalize">{selected.category}</span>}
-        <div className="flex gap-4 text-sm text-gray-500 mt-2 mb-4">
+        {selected.category && <span className="text-xs bg-gray-100 dark:bg-gray-700 px-2 py-1 rounded capitalize">{selected.category}</span>}
+        <div className="flex gap-4 text-sm text-gray-500 dark:text-gray-400 mt-2 mb-4">
           {selected.prep_time_minutes && <span>Prep: {selected.prep_time_minutes}m</span>}
           {selected.cook_time_minutes && <span>Cook: {selected.cook_time_minutes}m</span>}
           {selected.servings && <span>Serves: {selected.servings}</span>}
         </div>
-        {selected.description && <p className="text-gray-700 mb-4">{selected.description}</p>}
+        {selected.description && <p className="text-gray-700 dark:text-gray-300 mb-4">{selected.description}</p>}
 
         <h2 className="font-semibold mb-2">Ingredients</h2>
-        {ingLoading ? <p className="text-gray-400 text-sm">Loading...</p> : (
+        {ingLoading ? <p className="text-gray-400 dark:text-gray-500 text-sm">Loading...</p> : (
           <>
             {ingredients.length === 0
-              ? <p className="text-gray-400 text-sm mb-3">No ingredients yet.</p>
+              ? <p className="text-gray-400 dark:text-gray-500 text-sm mb-3">No ingredients yet.</p>
               : <ul className="mb-3 space-y-1">
                   {ingredients.map(ing => (
                     <li key={ing.id} className="flex justify-between items-center text-sm">
@@ -258,16 +265,16 @@ export default function MainPage() {
                 </ul>
             }
             <form onSubmit={handleAddIngredient} className="flex gap-2 mb-6">
-              <input placeholder="Name *" value={ingName} onChange={e => setIngName(e.target.value)} className="border rounded px-2 py-1 flex-1 text-sm" />
-              <input placeholder="Amount" value={ingAmount} onChange={e => setIngAmount(e.target.value)} className="border rounded px-2 py-1 w-20 text-sm" />
-              <input placeholder="Unit" value={ingUnit} onChange={e => setIngUnit(e.target.value)} className="border rounded px-2 py-1 w-20 text-sm" />
+              <input placeholder="Name *" value={ingName} onChange={e => setIngName(e.target.value)} className="border dark:border-gray-600 rounded px-2 py-1 flex-1 text-sm bg-white dark:bg-gray-800 dark:text-gray-100" />
+              <input placeholder="Amount" value={ingAmount} onChange={e => setIngAmount(e.target.value)} className="border dark:border-gray-600 rounded px-2 py-1 w-20 text-sm bg-white dark:bg-gray-800 dark:text-gray-100" />
+              <input placeholder="Unit" value={ingUnit} onChange={e => setIngUnit(e.target.value)} className="border dark:border-gray-600 rounded px-2 py-1 w-20 text-sm bg-white dark:bg-gray-800 dark:text-gray-100" />
               <button type="submit" className="bg-blue-600 text-white px-3 py-1 rounded text-sm">Add</button>
             </form>
           </>
         )}
 
         <h2 className="font-semibold mb-2">Instructions</h2>
-        <p className="text-gray-700 whitespace-pre-wrap">{selected.instructions}</p>
+        <p className="text-gray-700 dark:text-gray-300 whitespace-pre-wrap">{selected.instructions}</p>
       </div>
     )
   }
@@ -277,7 +284,8 @@ export default function MainPage() {
     <div className="max-w-lg mx-auto mt-8 px-4 pb-12">
       <div className="flex justify-between items-center mb-6">
         <h1 className="text-xl font-bold">My Recipes</h1>
-        <div className="flex gap-2">
+        <div className="flex gap-2 items-center">
+          <button onClick={toggle} className={themeBtn} aria-label="Toggle dark mode">{dark ? '☀️' : '🌙'}</button>
           <button onClick={() => { setForm(emptyForm); setFormError(null); setView('create') }} className={btnBlue}>+ New</button>
           <button onClick={handleSignOut} className={btnGray}>Logout</button>
         </div>
@@ -288,19 +296,19 @@ export default function MainPage() {
           placeholder="Search recipes..."
           value={search}
           onChange={e => setSearch(e.target.value)}
-          className="border rounded px-3 py-2 flex-1"
+          className="border dark:border-gray-600 rounded px-3 py-2 flex-1 bg-white dark:bg-gray-800 dark:text-gray-100 placeholder-gray-400"
         />
-        <select value={filterCat} onChange={e => setFilterCat(e.target.value)} className="border rounded px-3 py-2">
+        <select value={filterCat} onChange={e => setFilterCat(e.target.value)} className="border dark:border-gray-600 rounded px-3 py-2 bg-white dark:bg-gray-800 dark:text-gray-100">
           <option value="">All</option>
           {CATEGORIES.map(c => <option key={c} value={c}>{c.charAt(0).toUpperCase() + c.slice(1)}</option>)}
         </select>
       </div>
 
-      {isLoading && <p className="text-center py-8 text-gray-500">Loading...</p>}
+      {isLoading && <p className="text-center py-8 text-gray-500 dark:text-gray-400">Loading...</p>}
       {error && <p className="text-red-500 text-center py-8">{error}</p>}
 
       {!isLoading && !error && filtered.length === 0 && (
-        <div className="text-center py-12 text-gray-500">
+        <div className="text-center py-12 text-gray-500 dark:text-gray-400">
           {recipes.length === 0 ? 'No recipes yet. Create your first one!' : 'No recipes match your search.'}
         </div>
       )}
@@ -308,12 +316,12 @@ export default function MainPage() {
       {!isLoading && !error && (
         <ul className="space-y-3">
           {filtered.map(recipe => (
-            <li key={recipe.id} className="border rounded p-4 hover:bg-gray-50 cursor-pointer" onClick={() => openDetail(recipe)}>
+            <li key={recipe.id} className="border dark:border-gray-700 rounded p-4 hover:bg-gray-50 dark:hover:bg-gray-800 cursor-pointer" onClick={() => openDetail(recipe)}>
               <div className="flex justify-between items-start">
                 <div>
                   <p className="font-medium">{recipe.title}</p>
-                  {recipe.description && <p className="text-sm text-gray-500 mt-1 line-clamp-2">{recipe.description}</p>}
-                  <div className="flex gap-3 text-xs text-gray-400 mt-2">
+                  {recipe.description && <p className="text-sm text-gray-500 dark:text-gray-400 mt-1 line-clamp-2">{recipe.description}</p>}
+                  <div className="flex gap-3 text-xs text-gray-400 dark:text-gray-500 mt-2">
                     {recipe.category && <span className="capitalize">{recipe.category}</span>}
                     {recipe.prep_time_minutes && <span>Prep {recipe.prep_time_minutes}m</span>}
                     {recipe.cook_time_minutes && <span>Cook {recipe.cook_time_minutes}m</span>}
