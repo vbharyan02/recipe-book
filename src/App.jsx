@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react'
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom'
 import supabase from './lib/supabase'
+import { ThemeProvider } from './lib/ThemeContext'
 import LoginPage from './pages/LoginPage'
 import RegisterPage from './pages/RegisterPage'
 import MainPage from './pages/MainPage'
@@ -17,12 +18,16 @@ export default function App() {
   if (session === undefined) return null
 
   return (
-    <BrowserRouter>
-      <Routes>
-        <Route path="/login" element={session ? <Navigate to="/" /> : <LoginPage />} />
-        <Route path="/register" element={session ? <Navigate to="/" /> : <RegisterPage />} />
-        <Route path="/" element={session ? <MainPage /> : <Navigate to="/login" />} />
-      </Routes>
-    </BrowserRouter>
+    <ThemeProvider>
+      <div className="min-h-screen bg-white dark:bg-gray-900 text-gray-900 dark:text-gray-100">
+        <BrowserRouter>
+          <Routes>
+            <Route path="/login" element={session ? <Navigate to="/" /> : <LoginPage />} />
+            <Route path="/register" element={session ? <Navigate to="/" /> : <RegisterPage />} />
+            <Route path="/" element={session ? <MainPage /> : <Navigate to="/login" />} />
+          </Routes>
+        </BrowserRouter>
+      </div>
+    </ThemeProvider>
   )
 }
