@@ -31,26 +31,30 @@ export default function LoginPage() {
   }
 
   return (
-    <div className="min-h-screen bg-amber-50 dark:bg-gray-950 flex items-center justify-center px-4">
+    <div className="min-h-screen bg-gradient-to-br from-amber-50 via-orange-50 to-yellow-50 dark:from-gray-950 dark:via-gray-900 dark:to-gray-950 flex items-center justify-center px-4">
       <div className="w-full max-w-sm">
-        <div className="flex justify-end mb-2">
+        <div className="flex justify-end mb-3">
           <button
             onClick={toggle}
-            className="p-2 rounded-xl hover:bg-amber-100 dark:hover:bg-gray-800 transition-colors"
+            className="p-2 rounded-xl hover:bg-amber-100 dark:hover:bg-gray-800 transition-colors text-gray-500 dark:text-gray-400"
             aria-label="Toggle dark mode"
           >
             {dark ? '☀️' : '🌙'}
           </button>
         </div>
+
         <div className="bg-white dark:bg-gray-900 rounded-2xl shadow-xl p-8 border border-amber-100 dark:border-gray-800">
           <div className="text-center mb-8">
-            <div className="text-5xl mb-3">🍳</div>
-            <h1 className="text-2xl font-bold text-gray-900 dark:text-white">Recipe Book</h1>
-            <p className="text-sm text-gray-500 dark:text-gray-400 mt-1">Sign in to your kitchen</p>
+            <div className="inline-flex items-center justify-center w-16 h-16 bg-amber-500 rounded-2xl mb-4 shadow-lg shadow-amber-200 dark:shadow-amber-900/30">
+              <span className="text-3xl">🍳</span>
+            </div>
+            <h1 className="text-2xl font-bold text-gray-900 dark:text-white tracking-tight">Kitchen Hub</h1>
+            <p className="text-sm text-gray-500 dark:text-gray-400 mt-1">Welcome back — sign in to continue</p>
           </div>
+
           <form onSubmit={handleSubmit} className="space-y-4">
             <div>
-              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Email</label>
+              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1.5">Email</label>
               <input
                 type="email"
                 placeholder="you@example.com"
@@ -61,7 +65,7 @@ export default function LoginPage() {
               />
             </div>
             <div>
-              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Password</label>
+              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1.5">Password</label>
               <input
                 type="password"
                 placeholder="••••••••"
@@ -79,14 +83,15 @@ export default function LoginPage() {
             <button
               type="submit"
               disabled={loading}
-              className="w-full bg-amber-500 hover:bg-amber-600 text-white font-semibold py-2.5 rounded-xl transition-all duration-150 disabled:opacity-50 disabled:cursor-not-allowed shadow-sm hover:shadow-md"
+              className="w-full bg-amber-500 hover:bg-amber-600 active:bg-amber-700 text-white font-semibold py-2.5 rounded-xl transition-all duration-150 disabled:opacity-50 disabled:cursor-not-allowed shadow-sm hover:shadow-md hover:shadow-amber-200 dark:hover:shadow-amber-900/30 mt-2"
             >
               {loading ? 'Signing in...' : 'Sign In'}
             </button>
           </form>
+
           <p className="mt-6 text-center text-sm text-gray-600 dark:text-gray-400">
             No account?{' '}
-            <Link to="/register" className="text-amber-600 dark:text-amber-400 font-medium hover:underline">
+            <Link to="/register" className="text-amber-600 dark:text-amber-400 font-semibold hover:underline">
               Create one
             </Link>
           </p>
